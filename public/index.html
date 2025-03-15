@@ -1,0 +1,84 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игры</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+        .balance {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .games-list {
+            padding: 20px;
+        }
+        .game-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button onclick="goHome()">На главную</button>
+        <div class="balance">💰 <span id="balance">500</span></div>
+    </div>
+    <div class="games-list" id="games-list">
+        <!-- Список игр -->
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+
+        // Получение баланса
+        fetch('https://your-server-url/webhook', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'get_balance', userId: tg.initDataUnsafe.user.id })
+        }).then(res => res.json()).then(data => {
+            document.getElementById('balance').innerText = data.balance;
+        });
+
+        // Загрузка списка игр
+        fetch('https://your-server-url/webhook', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'get_games' })
+        }).then(res => res.json()).then(data => {
+            const gamesList = document.getElementById('games-list');
+            data.games.forEach(game => {
+                const gameItem = document.createElement('div');
+                gameItem.className = 'game-item';
+                gameItem.innerText = game.name;
+                gameItem.onclick = () => startGame(game);
+                gamesList.appendChild(gameItem);
+            });
+        });
+
+        // Начало игры
+        function startGame(game) {
+            alert(`Запуск игры: ${game.name}`);
+        }
+
+        // Выход на главную
+        function goHome() {
+            tg.close();
+        }
+    </script>
+</body>
+</html>
