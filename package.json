@@ -1,12 +1,16 @@
 {
   "name": "telegram-bot",
   "version": "1.0.0",
-  "main": "server.js",
+  "description": "Telegram bot with mini-app",
+  "main": "server.js", // Убедитесь, что имя файла совпадает с вашим основным файлом сервера
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
     "node-telegram-bot-api": "^0.60.0"
+  },
+  "engines": {
+    "node": "16.x" // Убедитесь, что версия Node.js поддерживается
   }
 }
