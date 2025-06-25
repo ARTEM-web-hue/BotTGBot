@@ -1,4 +1,3 @@
-
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 require('dotenv').config();
@@ -10,11 +9,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // === Middleware для парсинга JSON ===
-app.use(express.json()); // 👈 ОБЯЗАТЕЛЬНО ДОБАВЬ ЭТУ СТРОКУ
+app.use(express.json());
 
 // === URL для вебхука ===
 const webhookEndpoint = `/bot${token}`;
-bot.setWebHook(`https://${process.env.RENDER_EXTERNAL_HOSTNAME}${webhookEndpoint}`); 
+const host = process.env.RENDER_EXTERNAL_HOSTNAME || 'localhost';
+const url = `https://${host}${webhookEndpoint}`; 
+
+bot.setWebHook(url)
+    .then(() => console.log('Вебхук установлен:', url))
+    .catch(err => console.error('Ошибка установки вебхука:', err));
 
 // === Обработка команды /start ===
 bot.onText(/\/start/, (msg) => {
@@ -32,8 +36,13 @@ app.post(webhookEndpoint, (req, res) => {
     console.log('Получено обновление:', req.body); // 👈 Для отладки
     if (!req.body) return res.sendStatus(400);     // 👈 Проверка на пустой body
 
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
+    try {
+        bot.processUpdate(req.body);
+        res.sendStatus(200);
+    } catch (err) {
+        console.error('Ошибка обработки обновления:', err);
+        res.sendStatus(500);
+    }
 });
 
 // === Главная страница ===
