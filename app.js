@@ -1,3 +1,4 @@
+
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 require('dotenv').config();
@@ -7,6 +8,9 @@ const token = process.env.BOT_TOKEN;
 const bot = new TelegramBot(token, { webHook: true });
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// === Middleware для парсинга JSON ===
+app.use(express.json()); // 👈 ОБЯЗАТЕЛЬНО ДОБАВЬ ЭТУ СТРОКУ
 
 // === URL для вебхука ===
 const webhookEndpoint = `/bot${token}`;
@@ -25,11 +29,14 @@ bot.onText(/\/start/, (msg) => {
 
 // === Роут для вебхука ===
 app.post(webhookEndpoint, (req, res) => {
+    console.log('Получено обновление:', req.body); // 👈 Для отладки
+    if (!req.body) return res.sendStatus(400);     // 👈 Проверка на пустой body
+
     bot.processUpdate(req.body);
     res.sendStatus(200);
 });
 
-// === Главная страница (для Render) ===
+// === Главная страница ===
 app.get('/', (req, res) => {
     res.send('Бот работает!');
 });
