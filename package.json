@@ -1,5 +1,5 @@
 {
-  "name": "simple-telegram-bot",
+  "name": "tg-bot-render",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "node-telegram-bot-api": "^0.54.0"
   }
 }
