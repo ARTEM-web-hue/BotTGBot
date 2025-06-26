@@ -12,20 +12,19 @@ const PORT = process.env.PORT || 3000;
 
 // === Обработка команды /start с инлайн-кнопками ===
 bot.start((ctx) => {
-    const buttons = {
-        reply_markup: {
-            inline_keyboard: [
-                [{ text: 'Кнопка 1', callback: 'btn1' }],
-                [
-                    { text: 'Кнопка 2', callback: 'btn2' },
-                    { text: 'Кнопка 3', callback: 'btn3' }
-                ],
-                [{ text: 'Кнопка 4', callback: 'btn4' }],
-                [{ text: 'Кнопка 5', callback: 'btn5' }]
-            ]
-        }
-    };
-
+const buttons = {
+    reply_markup: {
+        inline_keyboard: [
+            [{ text: 'Кнопка 1', callback_data: 'btn1' }],
+            [
+                { text: 'Кнопка 2', callback_data: 'btn2' },
+                { text: 'Кнопка 3', callback_data: 'btn3' }
+            ],
+            [{ text: 'Кнопка 4', callback_data: 'btn4' }],
+            [{ text: 'Кнопка 5', callback_data: 'btn5' }]
+        ]
+    }
+};
     ctx.reply('Выберите действие:', buttons);
 });
 // === Обработка нажатий на кнопки ===
