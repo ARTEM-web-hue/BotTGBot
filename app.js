@@ -103,7 +103,7 @@ app.get('/', (req, res) => {
 });
 // === Пинг самого себя, чтобы Render не усыпал сервис ===
 const HOST = `https://${host}`;
-
+const fetch = require('node-fetch');
 function wakeUpRender() {
     console.log(`Пингую себя: ${HOST}`);
 
