@@ -107,7 +107,7 @@ const HOST = `https://${host}`;
 function wakeUpRender() {
     console.log(`Пингую себя: ${HOST}`);
 
-    fetch(HOST)
+const fetch = require('node-fetch');
         .then(res => {
             if (res.status === 200) {
                 console.log('Render ответил OK — бот жив!');
