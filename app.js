@@ -1,9 +1,10 @@
-const fetch = require('node-fetch');
+// === Импорты ===
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
+const fetch = require('node-fetch'); // ✅ Подключаем один раз в начале
 require('dotenv').config();
 
-// === Настройки ===
+// === Настройки бота ===
 const token = process.env.BOT_TOKEN;
 const bot = new TelegramBot(token, { webHook: true });
 const app = express();
@@ -15,25 +16,17 @@ app.use(express.json());
 // === URL для вебхука ===
 const webhookEndpoint = `/bot${token}`;
 const host = process.env.RENDER_EXTERNAL_HOSTNAME || 'localhost';
-const url = `https://${host}${webhookEndpoint}`; 
+const url = `https://${host}${webhookEndpoint}`;
 
+// === Установка вебхука ===
 bot.setWebHook(url)
-    .then(() => console.log('Вебхук установлен:', url))
-    .catch(err => console.error('Ошибка установки вебхука:', err));
+    .then(() => console.log('✅ Вебхук установлен:', url))
+    .catch(err => console.error('❌ Ошибка установки вебхука:', err));
 
-// === Обработка команды /start ===
+// === Обработка команды /start с кнопками ===
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
 
-    // Отправляем первое сообщение
-    bot.sendMessage(chatId, 'Привет!');
-
-    // С шансом 10% — доп. сообщение
-    if (Math.random() < 0.1) {
-        bot.sendMessage(chatId, '🎉 Хах сработало!');
-    }
-
-    // Инлайн-меню
     const options = {
         reply_markup: {
             inline_keyboard: [
@@ -85,14 +78,13 @@ bot.on('callback_query', (query) => {
 
 // === Роут для вебхука ===
 app.post(webhookEndpoint, (req, res) => {
-    console.log('Получено обновление:', req.body); // 👈 Для отладки
-    if (!req.body) return res.sendStatus(400);     // 👈 Проверка на пустой body
+    if (!req.body) return res.sendStatus(400);
 
     try {
         bot.processUpdate(req.body);
         res.sendStatus(200);
     } catch (err) {
-        console.error('Ошибка обработки обновления:', err);
+        console.error('Ошибка обработки обновления:', err.message);
         res.sendStatus(500);
     }
 });
@@ -101,31 +93,32 @@ app.post(webhookEndpoint, (req, res) => {
 app.get('/', (req, res) => {
     res.send('Бот работает!');
 });
+
 // === Пинг самого себя, чтобы Render не усыпал сервис ===
-const HOST = `https://${host}`;
-const fetch = require('node-fetch');
 function wakeUpRender() {
-    console.log(`Пингую себя: ${HOST}`);
+    const HOST = `https://${host}`;
+    console.log(`📡 Пингую себя: ${HOST}`);
 
     fetch(HOST)
         .then(res => {
             if (res.status === 200) {
-                console.log('Render ответил OK — бот жив!');
+                console.log('✅ Render ответил OK — бот жив!');
             } else {
-                console.warn(`Render ответил статусом: ${res.status}`);
+                console.warn(`⚠️ Render ответил статусом: ${res.status}`);
             }
         })
         .catch(err => {
-            console.error('Ошибка пинга:', err.message);
+            console.error('❌ Ошибка пинга:', err.message);
         });
 }
 
-// Каждые 14 минут
+// Запуск каждые 14 минут
 setInterval(wakeUpRender, 14 * 60 * 1000);
 
-// Сразу при запуске
+// Первый пинг при старте
 wakeUpRender();
+
 // === Запуск сервера ===
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на порту ${PORT}`);
+    console.log(`🚀 Сервер запущен на порту ${PORT}`);
 });
