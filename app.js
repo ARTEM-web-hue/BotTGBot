@@ -1,5 +1,6 @@
 const { Telegraf } = require('telegraf');
 const express = require('express');
+const path = `/bot${process.env.BOT_TOKEN}`;
 require('dotenv').config();
 
 // === Инициализация бота ===
