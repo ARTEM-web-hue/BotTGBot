@@ -107,7 +107,7 @@ const HOST = `https://${host}`;
 function wakeUpRender() {
     console.log(`Пингую себя: ${HOST}`);
 
-const fetch = require('node-fetch');
+    fetch(HOST)
         .then(res => {
             if (res.status === 200) {
                 console.log('Render ответил OK — бот жив!');
@@ -120,10 +120,10 @@ const fetch = require('node-fetch');
         });
 }
 
-// Запускаем пинг каждые 14 минут (чуть меньше, чем timeout Render)
+// Каждые 14 минут
 setInterval(wakeUpRender, 14 * 60 * 1000);
 
-// Вызов сразу при запуске
+// Сразу при запуске
 wakeUpRender();
 // === Запуск сервера ===
 app.listen(PORT, () => {
