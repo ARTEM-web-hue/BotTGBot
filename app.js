@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 require('dotenv').config();
@@ -100,7 +101,30 @@ app.post(webhookEndpoint, (req, res) => {
 app.get('/', (req, res) => {
     res.send('Бот работает!');
 });
+// === Пинг самого себя, чтобы Render не усыпал сервис ===
+const HOST = `https://${host}`;
 
+function wakeUpRender() {
+    console.log(`Пингую себя: ${HOST}`);
+
+    fetch(HOST)
+        .then(res => {
+            if (res.status === 200) {
+                console.log('Render ответил OK — бот жив!');
+            } else {
+                console.warn(`Render ответил статусом: ${res.status}`);
+            }
+        })
+        .catch(err => {
+            console.error('Ошибка пинга:', err.message);
+        });
+}
+
+// Запускаем пинг каждые 14 минут (чуть меньше, чем timeout Render)
+setInterval(wakeUpRender, 14 * 60 * 1000);
+
+// Вызов сразу при запуске
+wakeUpRender();
 // === Запуск сервера ===
 app.listen(PORT, () => {
     console.log(`Сервер запущен на порту ${PORT}`);
