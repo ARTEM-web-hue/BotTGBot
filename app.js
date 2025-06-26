@@ -24,11 +24,62 @@ bot.setWebHook(url)
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
 
+    // Отправляем первое сообщение
     bot.sendMessage(chatId, 'Привет!');
 
+    // С шансом 10% — доп. сообщение
     if (Math.random() < 0.1) {
-        bot.sendMessage(chatId, 'Хах сработало!');
+        bot.sendMessage(chatId, '🎉 Хах сработало!');
     }
+
+    // Инлайн-меню
+    const options = {
+        reply_markup: {
+            inline_keyboard: [
+                [{ text: 'Кнопка 3', callback_data: 'btn3' }],
+                [
+                    { text: 'Кнопка 1', callback_data: 'btn1' },
+                    { text: 'Кнопка 2', callback_data: 'btn2' }
+                ],
+                [
+                    { text: 'Кнопка 4', callback_data: 'btn4' },
+                    { text: 'Кнопка 5', callback_data: 'btn5' }
+                ]
+            ]
+        }
+    };
+
+    bot.sendMessage(chatId, 'Выберите действие:', options);
+});
+
+// === Обработка нажатий на инлайн-кнопки ===
+bot.on('callback_query', (query) => {
+    const chatId = query.message.chat.id;
+    const data = query.data;
+
+    let responseText = '';
+
+    switch (data) {
+        case 'btn1':
+            responseText = 'Кнопка 1 нажата!';
+            break;
+        case 'btn2':
+            responseText = 'Кнопка 2 нажата!';
+            break;
+        case 'btn3':
+            responseText = 'Кнопка 3 нажата!';
+            break;
+        case 'btn4':
+            responseText = 'Кнопка 4 нажата!';
+            break;
+        case 'btn5':
+            responseText = 'Кнопка 5 нажата!';
+            break;
+        default:
+            responseText = 'Неизвестная кнопка!';
+    }
+
+    bot.answerCallbackQuery(query.id, { text: responseText });
 });
 
 // === Роут для вебхука ===
