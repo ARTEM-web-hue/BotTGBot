@@ -1,5 +1,5 @@
 const { Telegraf } = require('telegraf');
-const { InlineKeyboard } = require('telegraf/scenes');
+const { InlineKeyboard } = require('telegraf');
 const express = require('express');
 const path = `/bot${process.env.BOT_TOKEN}`;
 require('dotenv').config();
